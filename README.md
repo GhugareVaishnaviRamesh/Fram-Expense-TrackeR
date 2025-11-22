@@ -1,4 +1,5 @@
 Farm Input Expense Tracker
+
 Smart Farming · Expense Analytics · Profit Calculation
 The Farm Input Expense Tracker is a lightweight yet powerful Flask + MySQL web application designed to help farmers digitally record expenses, track crop yield, and calculate profit automatically.
 It also provides graphs, PDF reports, and crop-wise comparisons to support better and more informed agricultural decisions.
