@@ -1,50 +1,50 @@
 Farm Input Expense Tracker
 Smart Farming · Expense Analytics · Profit Calculation
+The Farm Input Expense Tracker is a lightweight yet powerful Flask + MySQL web application designed to help farmers digitally record expenses, track crop yield, and calculate profit automatically.
+It also provides graphs, PDF reports, and crop-wise comparisons to support better and more informed agricultural decisions.
 
-A lightweight and powerful Flask + MySQL web application that helps farmers digitally track expenses, record crop yield, and automatically compute profit.
-It also provides graphs, PDF reports, and crop-wise comparison for better decision-making.
+Features
+1. Expense Management
+Add daily farming expenses such as seeds, fertilizers, pesticides, labour, machinery, irrigation, and fuel.
+All expenses are categorized by crop name and date.
+View, manage, and delete expense records instantly.
+Helps farmers maintain accurate digital expense logs.
 
-🚜 ✨ Key Features at a Glance
-1️⃣ Expense Management
+3. Yield Tracking
+Record harvested crop quantity.
+Enter selling price per unit.
+System automatically calculates total income per crop.
 
-Add daily expenses: seeds, fertilizers, pesticides, labour, machinery, fuel, irrigation
-
-Categorized by crop & date
-
-View and delete records instantly
-
-2️⃣ Yield Tracking
-
-Record harvested quantity & selling price
-
-System auto-calculates total income per crop
-
-3️⃣ Profit & Analysis
-
+5. Profit Analysis
+Automatically computes:
 Net Profit = Total Income – Total Expense
+Crop-wise financial breakdown.
+Helps farmers identify the most profitable crops.
 
-Crop-wise financial comparison table
-
-4️⃣ Visual Analytics
-
+4. Visual Analytics
 Matplotlib bar chart showing:
+Total Expense
+Total Income
+Net Profit
+Chart helps in comparing the financial performance of each crop visually.
 
-Expense vs Income vs Net Profit (per crop)
+5. PDF Report Generation
+Generates a professional PDF report using ReportLab.
+Includes:
+Crop name
+Total expense
+Total income
+Net profit
 
-5️⃣ PDF Report Export
-
-Professional report generated using ReportLab
-
-Includes expense, income, and profit details for all crops
-
-🧰 Tech Stack
+Tech Stack
 Component	Technology
 Backend	Flask (Python)
 Database	MySQL
 Visualization	Matplotlib
 Reporting	ReportLab (PDF)
-Frontend	HTML · CSS · Bootstrap · Jinja2
-📦 Core Python Imports
+Frontend	HTML, CSS, Bootstrap, Jinja2
+
+Core Python Imports
 from flask import Flask, render_template, request, redirect, url_for, flash, Response
 from config import get_db_connection
 import matplotlib.pyplot as plt
