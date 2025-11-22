@@ -1,0 +1,201 @@
+from flask import Flask, render_template, request, redirect, url_for, flash, Response
+from config import get_db_connection
+import matplotlib.pyplot as plt
+from io import BytesIO
+
+app = Flask(__name__)
+app.secret_key = "farm_secret_key"
+
+# ===================== HOME PAGE =====================
+@app.route('/')
+def home():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Total Expenses
+    cursor.execute("SELECT IFNULL(SUM(amount), 0) AS total_expense FROM expenses")
+    total_expense = cursor.fetchone()['total_expense']
+
+    # Total Income (Yield × Price)
+    cursor.execute("SELECT IFNULL(SUM(total_yield * selling_price), 0) AS total_income FROM yield_data")
+    total_income = cursor.fetchone()['total_income']
+
+    conn.close()
+
+    # Compute Net Profit
+    net_profit = total_income - total_expense
+
+    return render_template(
+        'home.html',
+        total_expense=total_expense,
+        total_income=total_income,
+        net_profit=net_profit
+    )
+
+
+# ===================== ADD EXPENSE =====================
+@app.route('/add_expense', methods=['GET', 'POST'])
+def add_expense():
+    if request.method == 'POST':
+        date_entry = request.form['date']
+        crop_name = request.form['crop_name']
+        category = request.form['category']
+        amount = request.form['amount']
+        remarks = request.form['remarks']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO expenses (date, crop_name, category, amount, remarks)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (date_entry, crop_name, category, amount, remarks))
+        conn.commit()
+        conn.close()
+        flash("✅ Expense added successfully!")
+        return redirect(url_for('add_expense'))
+
+    return render_template('add_expense.html')
+
+
+# ===================== VIEW EXPENSES =====================
+@app.route('/view_expenses')
+def view_expenses():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM expenses ORDER BY date DESC")
+    expenses = cursor.fetchall()
+    conn.close()
+    return render_template('view_expenses.html', expenses=expenses)
+
+
+# ===================== DELETE EXPENSE =====================
+@app.route('/delete_expense/<int:id>')
+def delete_expense(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM expenses WHERE id = %s", (id,))
+    conn.commit()
+    conn.close()
+    flash("🗑️ Expense deleted successfully!")
+    return redirect(url_for('view_expenses'))
+
+
+# ===================== ADD YIELD =====================
+@app.route('/add_yield', methods=['GET', 'POST'])
+def add_yield():
+    if request.method == 'POST':
+        date_entry = request.form['date']
+        crop_name = request.form['crop_name']
+        total_yield = request.form['total_yield']
+        selling_price = request.form['selling_price']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO yield_data (date, crop_name, total_yield, selling_price)
+            VALUES (%s, %s, %s, %s)
+        """, (date_entry, crop_name, total_yield, selling_price))
+        conn.commit()
+        conn.close()
+        flash("✅ Yield added successfully!")
+        return redirect(url_for('add_yield'))
+
+    return render_template('add_yield.html')
+
+
+# ===================== VIEW YIELDS =====================
+@app.route('/view_yields')
+def view_yields():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM yield_data ORDER BY date DESC")
+    yields = cursor.fetchall()
+    conn.close()
+    return render_template('view_yields.html', yields=yields)
+
+
+# ===================== DELETE YIELD =====================
+@app.route('/delete_yield/<int:id>')
+def delete_yield(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM yield_data WHERE id = %s", (id,))
+    conn.commit()
+    conn.close()
+    flash("🗑️ Yield deleted successfully!")
+    return redirect(url_for('view_yields'))
+
+
+# ===================== REPORT PAGE =====================
+# ===================== REPORT PAGE (Dynamic Calculation) =====================
+@app.route('/report')
+def report():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Fetch total expenses by crop
+    cursor.execute("""
+        SELECT crop_name, SUM(amount) AS total_expense
+        FROM expenses
+        GROUP BY crop_name
+    """)
+    expenses = cursor.fetchall()
+
+    # Fetch total income by crop (total_yield × selling_price)
+    cursor.execute("""
+        SELECT crop_name, SUM(total_yield * selling_price) AS total_income
+        FROM yield_data
+        GROUP BY crop_name
+    """)
+    yields = cursor.fetchall()
+
+    # Merge results — dynamic profit per crop
+    all_crops = set([e['crop_name'] for e in expenses] + [y['crop_name'] for y in yields])
+    report_data = []
+
+    for crop in all_crops:
+        total_expense = next((e['total_expense'] for e in expenses if e['crop_name'] == crop), 0)
+        total_income = next((y['total_income'] for y in yields if y['crop_name'] == crop), 0)
+        net_profit = total_income - total_expense
+        report_data.append({
+            'crop_name': crop,
+            'total_expense': total_expense,
+            'total_income': total_income,
+            'net_profit': net_profit
+        })
+
+    conn.close()
+    return render_template('report.html', report_data=report_data)
+
+
+# ===================== EXPENSE GRAPH =====================
+@app.route('/expense_chart')
+def expense_chart():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT crop_name, SUM(amount) AS total_expense
+        FROM expenses GROUP BY crop_name
+    """)
+    data = cursor.fetchall()
+    conn.close()
+
+    crop_names = [d['crop_name'] for d in data]
+    total_expenses = [d['total_expense'] for d in data]
+
+    plt.figure(figsize=(6, 4))
+    plt.bar(crop_names, total_expenses, color='seagreen')
+    plt.title('Total Expenses by Crop')
+    plt.xlabel('Crop')
+    plt.ylabel('Expense (₹)')
+    plt.tight_layout()
+
+    img = BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    return Response(img.getvalue(), mimetype='image/png')
+
+
+# ===================== MAIN =====================
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>View Expenses</h3>
+<table class="table table-bordered table-striped">
+  <tr>
+    <th>ID</th>
+    <th>Date</th>
+    <th>Crop</th>
+    <th>Category</th>
+    <th>Amount</th>
+    <th>Remarks</th>
+    <th>Action</th>
+  </tr>
+  {% for e in expenses %}
+  <tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ e.date }}</td>
+    <td>{{ e.crop_name }}</td>
+    <td>{{ e.category }}</td>
+    <td>{{ e.amount }}</td>
+    <td>{{ e.remarks }}</td>
+    <td><a href="{{ url_for('delete_expense', id=e.id) }}" class="btn btn-danger btn-sm">Delete</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

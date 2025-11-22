@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Cost vs Income Report</h2>
+<table border="1" cellpadding="8">
+<tr>
+    <th>Crop</th>
+    <th>Total Cost (₹)</th>
+    <th>Total Income (₹)</th>
+    <th>Profit (₹)</th>
+</tr>
+{% for row in report_data %}
+<tr>
+    <td>{{ row.crop_name }}</td>
+    <td>{{ row.total_cost }}</td>
+    <td>{{ row.income }}</td>
+    <td>{{ row.profit }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<br>
+<img src="data:image/png;base64,{{ graph_url }}" alt="Graph">
+{% endblock %}

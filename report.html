@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+
+  <!-- Page Header -->
+  <div class="text-center mb-4">
+    <h3 class="fw-bold text-success">Crop Report</h3>
+    <p class="text-muted">Analyze your crop-wise expenses, income, and profit at a glance</p>
+  </div>
+
+  <!-- Report Table Card -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered text-center align-middle">
+          <thead class="table-success">
+            <tr>
+              <th>Crop</th>
+              <th>Total Expense (₹)</th>
+              <th>Total Income (₹)</th>
+              <th>Net Profit (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in report_data %}
+            <tr>
+              <td>{{ r.crop_name }}</td>
+              <td class="text-danger fw-semibold">₹ {{ "%.2f"|format(r.total_expense) }}</td>
+              <td class="text-success fw-semibold">₹ {{ "%.2f"|format(r.total_income) }}</td>
+              <td class="{% if r.net_profit >= 0 %}text-success fw-bold{% else %}text-danger fw-bold{% endif %}">
+                ₹ {{ "%.2f"|format(r.net_profit) }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download Button -->
+  <div class="text-center mb-5">
+    <a href="{{ url_for('download_report') }}" class="btn btn-success btn-lg shadow-sm px-4">
+      Download Report as PDF
+    </a>
+  </div>
+
+  <hr class="my-5">
+
+  <!-- Chart Section -->
+  <div class="text-center mb-3">
+    <h4 class="fw-bold text-success">Expense vs Income vs Profit (by Crop)</h4>
+  </div>
+  <div class="text-center">
+    <img src="{{ url_for('expense_chart') }}" class="img-fluid border rounded shadow-lg mt-3" alt="Expense Chart" style="max-width: 90%;">
+  </div>
+
+</div>
+{% endblock %}

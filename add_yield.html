@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <!-- Card Header -->
+        <div class="card-header bg-success text-white text-center">
+          <h3 class="mb-0">Add Yield</h3>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+          <form method="POST" id="yieldForm">
+
+            <!-- Date -->
+            <div class="mb-3">
+              <label for="date" class="form-label">Date</label>
+              <input type="date" id="date" name="date" class="form-control" required>
+            </div>
+
+            <!-- Crop Name -->
+            <div class="mb-3">
+              <label for="crop_name" class="form-label">Crop Name</label>
+              <input type="text" id="crop_name" name="crop_name" class="form-control" placeholder="Enter crop name" required>
+            </div>
+
+            <!-- Total Yield -->
+            <div class="mb-3">
+              <label for="total_yield" class="form-label">Total Yield (Kg)</label>
+              <input type="number" id="total_yield" name="total_yield" class="form-control" placeholder="Enter total yield" required>
+            </div>
+
+            <!-- Selling Price -->
+            <div class="mb-3">
+              <label for="selling_price" class="form-label">Selling Price (₹/Kg)</label>
+              <input type="number" id="selling_price" name="selling_price" class="form-control" placeholder="Enter selling price per Kg" required>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+              <button type="submit" class="btn btn-success px-4">Add Yield</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script>
+  // Restrict future dates
+  const dateInput = document.getElementById('date');
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.setAttribute('max', today);
+
+  // Validate crop name
+  document.getElementById('yieldForm').addEventListener('submit', function(e) {
+    const cropName = document.getElementById('crop_name').value.trim();
+    const textRegex = /^[A-Za-z\s]+$/;
+    if (!textRegex.test(cropName)) {
+      alert("Crop Name should contain only letters and spaces.");
+      e.preventDefault();
+      return;
+    }
+  });
+</script>
+{% endblock %}

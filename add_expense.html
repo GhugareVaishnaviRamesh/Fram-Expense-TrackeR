@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white text-center">
+          <h3 class="mb-0">Add Expense</h3>
+        </div>
+        <div class="card-body">
+          <form method="POST" id="expenseForm">
+            <div class="mb-3">
+              <label for="date" class="form-label">Date</label>
+              <input type="date" id="date" name="date" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="crop_name" class="form-label">Crop Name</label>
+              <input type="text" id="crop_name" name="crop_name" class="form-control" placeholder="Enter crop name" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="category" class="form-label">Category</label>
+              <input type="text" id="category" name="category" class="form-control" placeholder="Seeds, Fertilizer, Fuel..." required>
+            </div>
+
+            <div class="mb-3">
+              <label for="amount" class="form-label">Amount (₹)</label>
+              <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter amount" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="remarks" class="form-label">Remarks</label>
+              <textarea id="remarks" name="remarks" class="form-control" rows="3" placeholder="Optional remarks..."></textarea>
+            </div>
+
+            <div class="text-center">
+              <button type="submit" class="btn btn-success px-4">Add Expense</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Script for date restriction and text validation -->
+<script>
+  // Restrict future dates
+  const dateInput = document.getElementById('date');
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.setAttribute('max', today);
+
+  // Form validation for text fields
+  const form = document.getElementById('expenseForm');
+  form.addEventListener('submit', function(e) {
+    const cropName = document.getElementById('crop_name').value.trim();
+    const category = document.getElementById('category').value.trim();
+    const textRegex = /^[A-Za-z\s]+$/;
+
+    if (!textRegex.test(cropName)) {
+      alert("Crop Name should contain only letters and spaces.");
+      e.preventDefault();
+      return;
+    }
+    if (!textRegex.test(category)) {
+      alert("Category should contain only letters and spaces.");
+      e.preventDefault();
+      return;
+    }
+  });
+</script>
+{% endblock %}

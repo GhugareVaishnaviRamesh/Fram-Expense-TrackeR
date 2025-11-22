@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>View Yields</h3>
+<table class="table table-bordered table-striped">
+  <tr>
+    <th>ID</th>
+    <th>Date</th>
+    <th>Crop</th>
+    <th>Yield (Kg)</th>
+    <th>Selling Price</th>
+    <th>Action</th>
+  </tr>
+  {% for y in yields %}
+  <tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ y.date }}</td>
+    <td>{{ y.crop_name }}</td>
+    <td>{{ y.total_yield }}</td>
+    <td>{{ y.selling_price }}</td>
+    <td><a href="{{ url_for('delete_yield', id=y.id) }}" class="btn btn-danger btn-sm">Delete</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

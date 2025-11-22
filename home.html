@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+  <div class="hero-overlay"></div>
+  <div class="hero-content text-center text-white">
+    <h1 class="display-4 fw-bold animate-fade"> Farm Input Expense Tracker</h1>
+    <p class="lead mt-3 animate-fade-delay">
+      Track your farm expenses, analyze yields, and grow profits with data-driven insights.
+    </p>
+    <a href="{{ url_for('add_expense') }}" class="btn btn-outline-light mt-4 px-4 py-2 fw-semibold">
+      Get Started →
+    </a>
+  </div>
+</section>
+
+<!-- SUMMARY CARDS -->
+<div class="container my-5">
+  <h2 class="text-center fw-bold text-success mb-5"> Farm Overview</h2>
+  <div class="row text-center justify-content-center">
+    <div class="col-md-3 mb-4">
+      <div class="summary-card glass-card p-4">
+        <h6>Total Expense</h6>
+        <h2 class="text-danger fw-bold">₹ {{ "%.2f"|format(total_expense) }}</h2>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="summary-card glass-card p-4">
+        <h6>Total Income</h6>
+        <h2 class="text-success fw-bold">₹ {{ "%.2f"|format(total_income) }}</h2>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="summary-card glass-card p-4">
+        <h6>Net Profit</h6>
+        <h2 class="{% if net_profit >= 0 %}text-success{% else %}text-danger{% endif %} fw-bold">
+          ₹ {{ "%.2f"|format(net_profit) }}
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHY USE SECTION -->
+<section class="why-section py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4 text-success">🌱 Why Use Farm Tracker?</h2>
+    <p class="lead mb-5 w-75 mx-auto text-success">
+      Farmers often struggle to track daily input costs like seeds, fertilizer, and fuel, making it hard to know if their farm is truly profitable.
+      Farm Tracker brings <strong>clarity and control</strong> through digital insights.
+    </p>
+
+    <div class="row justify-content-center">
+      <div class="col-md-4 mb-4">
+        <div class="why-card border-success p-4 shadow-sm">
+          <h4 class="text-success"> Simplify Records</h4>
+          <p>Easily log all your farm expenses and categorize them for better tracking.</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="why-card border-success p-4 shadow-sm">
+          <h4 class="text-success"> Smart Profit Insights</h4>
+          <p>Auto-calculate crop-wise profit based on your yield and selling price.</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="why-card border-success p-4 shadow-sm">
+          <h4 class="text-success"> Data-Driven Growth</h4>
+          <p>Visualize performance trends and download detailed reports anytime.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
