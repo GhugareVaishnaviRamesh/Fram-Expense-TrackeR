@@ -52,8 +52,13 @@ Frontend	HTML, CSS, Bootstrap, Jinja2.
 
 Core Python Imports
 from flask import Flask, render_template, request, redirect, url_for, flash, Response
+
 from config import get_db_connection
+
 import matplotlib.pyplot as plt
+
 from io import BytesIO
+
 from reportlab.lib.pagesizes import A4
+
 from reportlab.pdfgen import canvas
